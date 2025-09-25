@@ -1,13 +1,21 @@
 --Создаём схему, в которой будем работать
 create schema if not exists final_attestation_pakudin authorization postgres;
 
+--Создаём таблицу категорий
+create table if not exists categories (
+    id serial primary key,
+    category_name varchar(100) not null
+);
+
 --Создаём таблицу товаров
 create table if not exists product (
     id serial primary key,
     product_name varchar(1000) not null,
     price decimal(10,2) not null check (price > 0),
     quantity integer not null check (quantity >= 0),
-    category varchar(100) not null
+    category_id integer not null,
+
+    foreign key (category_id) references category(id)
 );
 
 --Создаём таблицу покупателей
