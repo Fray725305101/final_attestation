@@ -15,7 +15,7 @@ create table if not exists product (
     quantity integer not null check (quantity >= 0),
     category_id integer not null,
 
-    foreign key (category_id) references category(id)
+    foreign key (category_id) references categories(id)
 );
 
 --Создаём таблицу покупателей
