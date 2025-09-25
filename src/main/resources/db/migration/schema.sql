@@ -15,4 +15,8 @@ create table if not exists customer (
     email varchar(300)
 );
 
---
+--Создаём таблицу статусов заказов
+create table if not exists order_status (
+    id serial primary key,
+    order_name varchar(100) not null
+);
