@@ -1,3 +1,6 @@
+--Создаём схему, в которой будем работать
+create schema if not exists final_attestation_pakudin;
+
 --Создаём таблицу товаров
 create table if not exists product (
     id serial primary key,
