@@ -1,5 +1,5 @@
 --Создаём схему, в которой будем работать
-create schema if not exists final_attestation_pakudin;
+create schema if not exists final_attestation_pakudin authorization postgres;
 
 --Создаём таблицу товаров
 create table if not exists product (
