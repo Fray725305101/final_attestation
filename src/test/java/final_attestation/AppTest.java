@@ -1,4 +1,4 @@
-package org.example;
+package final_attestation;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
