@@ -26,18 +26,18 @@ create table if not exists customer (
 --Создаём таблицу статусов заказов
 create table if not exists order_status (
     id serial primary key,
-    order_name varchar(100) not null
+    status_name varchar(100) not null
 );
 
 --Создаём таблицу заголовков заказов
 create table if not exists order_head (
     id serial primary key,
     customer_id integer not null,
-    order_date timestamp not null default current_timestamp(),
+    order_date timestamp not null default current_timestamp,
     status_id integer not null,
 
     foreign key (customer_id) references customer(id),
-    foreign key (status_id) references status(id)
+    foreign key (status_id) references order_status(id)
 );
 
 --Создаём таблицу тела заказов
@@ -51,3 +51,10 @@ create table if not exists order_body (
     foreign key (head_id) references order_head(id),
     foreign key (product_id) references product(id)
 );
+
+--Индексы:
+create index if not exists idx_order_head_customer_id on order_head(customer_id);
+create index if not exists idx_order_head_status_id on order_head(status_id);
+create index if not exists idx_order_head_order_date on order_head(order_date);
+create index if not exists idx_order_body_head_id on order_body(head_id);
+create index if not exists idx_order_body_product_id on order_body(product_id);
