@@ -20,3 +20,14 @@ create table if not exists order_status (
     id serial primary key,
     order_name varchar(100) not null
 );
+
+--Создаём таблицу заголовков заказов
+create table if not exists order_head (
+    id serial primary key,
+    customer_id integer not null,
+    order_date timestamp not null default current_timestamp(),
+    status_id integer not null,
+
+    foreign key (customer_id) references customer(id),
+    foreign key (status_id) references status(id)
+);
