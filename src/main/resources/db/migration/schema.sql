@@ -8,3 +8,11 @@ create table if not exists product (
 );
 
 --Создаём таблицу покупателей
+create table if not exists customer (
+    id serial primary key,
+    customer_name varchar(1000) not null,
+    phone varchar(20) not null,
+    email varchar(300)
+);
+
+--
