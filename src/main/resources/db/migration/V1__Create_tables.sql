@@ -1,8 +1,8 @@
---Для создания БД
---CREATE DATABASE final_attestation_pakudin WITH ENCODING 'UTF8' LC_COLLATE 'Russian_Russia.1251' LC_CTYPE 'Russian_Russia.1251' TEMPLATE template0;
-
 --Создаём схему, в которой будем работать
 create schema if not exists final_attestation_pakudin authorization postgres;
+
+--Устанавливаем схему по умолчанию
+SET search_path TO final_attestation_pakudin;
 
 --Создаём таблицу категорий
 create table if not exists categories (
