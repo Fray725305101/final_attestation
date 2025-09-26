@@ -10,7 +10,7 @@ insert into order_status (status_name) values
 ('Готов к выдаче'),
 ('Выдан');
 
-insert into customers (first_name, last_name, phone, email) values
+insert into customer (first_name, last_name, phone, email) values
 ('Йо', 'Асакура', '+1234567890','shaman@king.org'),
 ('Амидамару', '', '+1234567890', ''),
 ('Финн', 'Парнишка', '+2345678901', 'finn.human@adventuretime.com'),
