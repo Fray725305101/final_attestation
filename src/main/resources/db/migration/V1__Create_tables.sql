@@ -1,9 +1,6 @@
 --Создаём схему, в которой будем работать
 create schema if not exists final_attestation_pakudin authorization postgres;
 
---Устанавливаем схему по умолчанию
-SET search_path TO final_attestation_pakudin;
-
 --Создаём таблицу категорий
 create table if not exists categories (
     id serial primary key,
