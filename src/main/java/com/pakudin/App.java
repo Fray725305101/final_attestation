@@ -16,8 +16,10 @@ public class App {
             Flyway flyway = Flyway.configure()
                     .dataSource(props.getProperty("db.url"),
                             props.getProperty("db.username"),
-                            props.getProperty("db.password"))
-                    .schemas(props.getProperty("db.schema"))
+                            props.getProperty("db.password")
+                            )
+                    .driver("org.postgresql.Driver")
+                    .defaultSchema(props.getProperty("db.schema"))
                     .locations(props.getProperty("flyway.locations"))
                     .baselineOnMigrate(Boolean.parseBoolean(props.getProperty("flyway.baselineOnMigrate")))
                     .load();
