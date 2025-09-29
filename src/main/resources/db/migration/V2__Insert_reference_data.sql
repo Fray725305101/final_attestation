@@ -2,13 +2,13 @@
 SET search_path TO final_attestation_pakudin;
 
 insert into categories (category_name) values
-('ОЗУ'),
-('ЦПУ'),
-('Накопитель'),
-('Блок питания');
+('RAM'),
+('CPU'),
+('Storage'),
+('Power Supply');
 
 insert into order_status (status_name) values
-('Создан'),
-('В работе'),
-('Готов к выдаче'),
-('Выдан');
+('Created'),
+('In Progress'),
+('Ready for Pickup'),
+('Completed');
