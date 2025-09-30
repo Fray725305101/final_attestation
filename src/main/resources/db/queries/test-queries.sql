@@ -48,3 +48,10 @@ from (
 ) as ordered
 where final_attestation_pakudin.product.id = ordered.product_id
 and final_attestation_pakudin.product.quantity >= ordered.ordered_quantity;
+
+delete from final_attestation_pakudin.customer c
+where c.id not in (
+    select oh.customer_id from final_attestation_pakudin.order_head oh);
+
+delete from final_attestation_pakudin.order_body
+where price < 1000;
