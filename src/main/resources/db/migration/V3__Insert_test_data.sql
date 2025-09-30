@@ -7,7 +7,7 @@ insert into customer (first_name, last_name, phone, email) values
 ('Finn', 'Human', '+2345678901', 'finn.human@adventuretime.com'),
 ('Jake', 'Dog', '+3456789012', 'jake.dog@adventuretime.com'),
 ('Morty', 'Smith', '+4567890123', 'morty.smith@rickandmorty.com'),
-('Rick', 'Sanchez', '+00000000000', 'wubbalubbadubdub@rickandmorty.com'),
+('Rick', 'Sanchez', '+0000000000', 'wubbalubbadubdub@rickandmorty.com'),
 ('Scooby', 'Doo', '+5678901234', 'scooby.doo@hb.com'),
 ('Peter', 'Parker', '+6789012345', 'your_friendly_neighbor@marvel.com'),
 ('Sasuke', 'Uchiha', '+7890123456', 'sasuke.uchiha@konoha.com'),
