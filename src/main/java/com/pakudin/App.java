@@ -4,11 +4,14 @@ import org.flywaydb.core.Flyway;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.sql.Connection;
 import java.util.Properties;
 import java.io.FileInputStream;
 import java.io.IOException;
 
 public class App {
+    private static Connection connection;
+
     public static void main(String[] args) {
         try {
             //Получаем конфиг
@@ -25,7 +28,7 @@ public class App {
         }
     }
 
-    public static boolean askForMigration() {
+    private static boolean askForMigration() {
         //Получаем поток байтов, преобразуем в символы, буферизуем для эффективного чтения
         //В нашем случае (1 символ) роли особой не сыграет, но пусть будет
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -47,7 +50,7 @@ public class App {
         }
     }
 
-    public static void runMigration(Properties props) {
+    private static void runMigration(Properties props) {
             System.out.println("Запуск миграции...");
             Flyway flyway = Flyway.configure()
                     .dataSource(props.getProperty("db.url"),
