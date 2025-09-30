@@ -1,7 +1,11 @@
-select first_name, last_name from final_attestation_pakudin.customer;
+select p.product_name, sum(ob.quantity) as sum from final_attestation_pakudin.product p
+join final_attestation_pakudin.order_body ob on p.id = ob.product_id
+group by p.product_name
+order by sum desc
+limit 3;
 
 select * from final_attestation_pakudin.product
-where product_name like '%DDR%'
+where product_name like 'DDR%'
 and price >= 3000;
 
 select p.product_name, c.category_name from final_attestation_pakudin.product p

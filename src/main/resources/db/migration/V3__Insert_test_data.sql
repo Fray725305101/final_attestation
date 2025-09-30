@@ -17,7 +17,7 @@ insert into product (product_name, price, quantity, category_id) values
 ('DDR4 16GB 3200MHz', 4500.00, 25, 1),
 ('DDR5 32GB 4800MHz', 8900.00, 15, 1),
 ('Intel Core i7-13700K', 32000.00, 8, 2),
-('AMD Ryzen 7 7800X3D', 28500.00, 10, 2),
+('AMD Ryzen 7 7800X3D', 29000.00, 10, 2),
 ('SSD NVMe 1TB', 5500.00, 30, 3),
 ('SSD SATA 512GB', 3200.00, 40, 3),
 ('HDD 2TB 7200RPM', 4500.00, 20, 3),
