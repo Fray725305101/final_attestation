@@ -30,7 +30,7 @@ public class App {
         //В нашем случае (1 символ) роли особой не сыграет, но пусть будет
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         try {
-            System.out.println("Приступить к миграции? Y/N: ");
+            System.out.print("Приступить к миграции? Y/N: ");
             String input = reader.readLine().trim().toUpperCase();
             if (input.equals("Y") || input.equals("Д")) {
                 return true;
