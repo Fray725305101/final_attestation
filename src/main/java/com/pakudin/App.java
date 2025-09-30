@@ -30,6 +30,7 @@ public class App {
         //В нашем случае (1 символ) роли особой не сыграет, но пусть будет
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         try {
+            System.out.println("Внимание! При миграции все данные в схеме будут удалены!");
             System.out.print("Приступить к миграции? Y/N: ");
             String input = reader.readLine().trim().toUpperCase();
             if (input.equals("Y") || input.equals("Д")) {
@@ -57,7 +58,9 @@ public class App {
                     .defaultSchema(props.getProperty("db.schema"))
                     .locations(props.getProperty("flyway.locations"))
                     .baselineOnMigrate(Boolean.parseBoolean(props.getProperty("flyway.baselineOnMigrate")))
+                    .cleanDisabled(Boolean.parseBoolean(props.getProperty("flyway.cleanDisabled")))
                     .load();
+            flyway.clean();
             flyway.migrate();
             System.out.println("Миграция завершена!");
     }
