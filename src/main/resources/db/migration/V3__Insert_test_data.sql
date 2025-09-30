@@ -27,7 +27,7 @@ insert into product (product_name, price, quantity, category_id) values
 
 insert into order_head (customer_id, order_date, status_id) values
 (1, '2024-01-15 10:30:00', 4),
-(2, '2024-07-16 14:20:00', 3),
+(1, '2024-07-16 14:20:00', 3),
 (3, '2025-03-15 09:15:00', 2),
 (4, '2025-07-18 16:45:00', 1),
 (5, '2025-08-10 11:00:00', 4),
