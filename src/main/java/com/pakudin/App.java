@@ -176,4 +176,40 @@ public class App {
             throw new SQLException("Не удалось создать товар");
         }
     }
+
+    private static int createOrderForCustomer(Connection conn, int customerId, int productId) throws SQLException {
+        // Создаем заголовок заказа
+        String orderHeadSql = "INSERT INTO final_attestation_pakudin.order_head (customer_id, order_date, status_id) VALUES (?, CURRENT_TIMESTAMP, ?)";
+        int orderId;
+        try (PreparedStatement pstmt = conn.prepareStatement(orderHeadSql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setInt(1, customerId);
+            pstmt.setInt(2, 1); // Created status
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        orderId = rs.getInt(1);
+                        System.out.println("Создан заказ с ID: " + orderId);
+                    } else {
+                        throw new SQLException("Не удалось получить ID заказа");
+                    }
+                }
+            } else {
+                throw new SQLException("Не удалось создать заказ");
+            }
+        }
+        // Добавляем товар в заказ
+        String orderBodySql = "INSERT INTO final_attestation_pakudin.order_body (head_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(orderBodySql)) {
+            pstmt.setInt(1, orderId);
+            pstmt.setInt(2, productId);
+            pstmt.setInt(3, 2);
+            pstmt.setDouble(4, 7500.00);
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("Товар добавлен в заказ");
+            }
+        }
+        return orderId;
+    }
 }
