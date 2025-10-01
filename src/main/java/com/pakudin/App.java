@@ -261,8 +261,28 @@ public class App {
         }
     }
 
+    //Метод для обрезки слишком длинных строк
     private static String truncate(String str, int length) {
         if (str == null) return "";
         return str.length() > length ? str.substring(0, length - 3) + "..." : str;
+    }
+
+    private static void updateProductPriceAndQuantity(Connection conn, int productId) throws SQLException {
+        //Обновляем цену
+        String updatePriceSql = "UPDATE final_attestation_pakudin.product SET price = ? WHERE id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(updatePriceSql)) {
+            pstmt.setDouble(1, 8000.00); //Новая цена
+            pstmt.setInt(2, productId);
+            int rowsUpdated = pstmt.executeUpdate();
+            System.out.println("Обновлена цена товара. Затронуто строк: " + rowsUpdated);
+        }
+        //Обновляем количество
+        String updateQuantitySql = "UPDATE final_attestation_pakudin.product SET quantity = ? WHERE id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(updateQuantitySql)) {
+            pstmt.setInt(1, 45); //Новое количество
+            pstmt.setInt(2, productId);
+            int rowsUpdated = pstmt.executeUpdate();
+            System.out.println("Обновлено количество товара. Затронуто строк: " + rowsUpdated);
+        }
     }
 }
