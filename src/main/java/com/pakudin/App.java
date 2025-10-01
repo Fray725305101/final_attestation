@@ -212,4 +212,57 @@ public class App {
         }
         return orderId;
     }
+
+    private static void displayLast5Orders(Connection conn) throws SQLException {
+        String sql = """
+            SELECT 
+                oh.id as order_id,
+                c.first_name || ' ' || c.last_name as customer_name,
+                oh.order_date,
+                os.status_name,
+                string_agg(p.product_name || ' (x' || ob.quantity || ')', ', ') as products,
+                c.phone
+            FROM final_attestation_pakudin.order_head oh
+            JOIN final_attestation_pakudin.customer c ON c.id = oh.customer_id
+            JOIN final_attestation_pakudin.order_status os ON os.id = oh.status_id
+            JOIN final_attestation_pakudin.order_body ob ON ob.head_id = oh.id
+            JOIN final_attestation_pakudin.product p ON p.id = ob.product_id
+            GROUP BY oh.id, c.first_name, c.last_name, oh.order_date, os.status_name, c.phone
+            ORDER BY oh.order_date DESC
+            LIMIT 5
+            """;
+
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            System.out.println("┌─────────┬──────────────────────┬─────────────────────┬──────────────────┬───────────────────────────────────────────┬────────────────┐");
+            System.out.println("│ Order ID│ Customer Name        │ Order Date          │ Status           │ Products                                  │ Phone          │");
+            System.out.println("├─────────┼──────────────────────┼─────────────────────┼──────────────────┼───────────────────────────────────────────┼────────────────┤");
+
+            while (rs.next()) {
+                int orderId = rs.getInt("order_id");
+                String customerName = rs.getString("customer_name");
+                Timestamp orderDate = rs.getTimestamp("order_date");
+                String status = rs.getString("status_name");
+                String products = rs.getString("products");
+                String phone = rs.getString("phone");
+
+                // Форматируем вывод в виде таблицы
+                System.out.printf("│ %-7d │ %-20s │ %-19s │ %-16s │ %-43s │ %-14s │%n",
+                        orderId,
+                        truncate(customerName, 20),
+                        orderDate.toLocalDateTime().toString().replace('T', ' '),
+                        truncate(status, 16),
+                        truncate(products, 43),
+                        truncate(phone, 14)
+                );
+            }
+            System.out.println("└─────────┴──────────────────────┴─────────────────────┴──────────────────┴───────────────────────────────────────────┴────────────────┘");
+        }
+    }
+
+    private static String truncate(String str, int length) {
+        if (str == null) return "";
+        return str.length() > length ? str.substring(0, length - 3) + "..." : str;
+    }
 }
