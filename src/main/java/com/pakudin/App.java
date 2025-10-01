@@ -18,7 +18,6 @@ public class App {
             Properties props = new Properties();
             props.load(new FileInputStream("src/main/resources/application.properties"));
             System.out.println("Начинаем миграцию");
-            System.out.println("Внимание! При миграции все данные в схеме будут удалены!");
             if (askForExec()) {
                 runMigration(props); //Мигрируем
             } else {
@@ -239,9 +238,9 @@ public class App {
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
-            System.out.println("┌─────────┬──────────────────────┬─────────────────────┬──────────────────┬───────────────────────────────────────────┬────────────────┐");
-            System.out.println("│ Order ID│ Customer Name        │ Order Date          │ Status           │ Products                                  │ Phone          │");
-            System.out.println("├─────────┼──────────────────────┼─────────────────────┼──────────────────┼───────────────────────────────────────────┼────────────────┤");
+            System.out.println("┌─────────┬──────────────────────┬─────────────────────┬──────────────────┬─────────────────────────────────────────────┬────────────────┐");
+            System.out.println("│ Order ID│ Customer Name        │ Order Date          │ Status           │ Products                                    │ Phone          │");
+            System.out.println("├─────────┼──────────────────────┼─────────────────────┼──────────────────┼─────────────────────────────────────────────┼────────────────┤");
 
             while (rs.next()) {
                 int orderId = rs.getInt("order_id");
@@ -262,7 +261,7 @@ public class App {
                         truncate(phone, 14)
                 );
             }
-            System.out.println("└─────────┴──────────────────────┴─────────────────────┴──────────────────┴───────────────────────────────────────────┴────────────────┘");
+            System.out.println("└─────────┴──────────────────────┴─────────────────────┴──────────────────┴─────────────────────────────────────────────┴────────────────┘");
         }
     }
 
@@ -300,7 +299,7 @@ public class App {
 
     private static void deleteTestRecords(Connection conn, int orderId, int customerId, int productId) throws SQLException {
         // Удаляем в правильном порядке из-за foreign keys
-        System.out.println("Удаляем тестовые записи");
+        System.out.println("Приступаем к удалению");
         //Удаляем тело заказа
         String deleteOrderBodySql = "DELETE FROM final_attestation_pakudin.order_body WHERE head_id = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(deleteOrderBodySql)) {
