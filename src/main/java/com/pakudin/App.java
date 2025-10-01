@@ -407,6 +407,54 @@ public class App {
         }
     }
 
+    private static void printTableHeader(ResultSetMetaData metaData, int columnCount) throws SQLException {
+        StringBuilder header = new StringBuilder("┌");
+        StringBuilder separator = new StringBuilder("├");
+        for (int i = 1; i <= columnCount; i++) {
+            String columnName = metaData.getColumnName(i);
+            int columnWidth = Math.max(columnName.length(), 15);
+            header.append("─".repeat(columnWidth)).append("─┬");
+            separator.append("─".repeat(columnWidth)).append("─┼");
+        }
+        header.setLength(header.length() - 1);
+        separator.setLength(separator.length() - 1);
+        header.append("┐");
+        separator.append("┤");
+        System.out.println(header);
+        //Названия колонок
+        System.out.print("│");
+        for (int i = 1; i <= columnCount; i++) {
+            String columnName = metaData.getColumnName(i);
+            int columnWidth = Math.max(columnName.length(), 15);
+            System.out.printf(" %-" + (columnWidth - 1) + "s│", columnName);
+        }
+        System.out.println();
+        System.out.println(separator);
+    }
 
+    private static void printTableRow(ResultSet rs, ResultSetMetaData metaData, int columnCount) throws SQLException {
+        System.out.print("│");
+        for (int i = 1; i <= columnCount; i++) {
+            String value = rs.getString(i);
+            if (value == null) value = "NULL";
+            String columnName = metaData.getColumnName(i);
+            int columnWidth = Math.max(columnName.length(), 15);
+            //Обрезаем длинные значения
+            if (value.length() > columnWidth - 2) {
+                value = value.substring(0, columnWidth - 5) + "...";
+            }
+            System.out.printf(" %-" + (columnWidth - 1) + "s│", value);
+        }
+        System.out.println();
+    }
 
+    private static void printTableFooter(int columnCount) {
+        StringBuilder footer = new StringBuilder("└");
+        for (int i = 0; i < columnCount; i++) {
+            footer.append("─".repeat(15)).append("─┴");
+        }
+        footer.setLength(footer.length() - 1);
+        footer.append("┘");
+        System.out.println(footer);
+    }
 }
