@@ -4,9 +4,7 @@ import org.flywaydb.core.Flyway;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Properties;
 import java.io.FileInputStream;
 
@@ -134,6 +132,29 @@ public class App {
             } catch (SQLException e) {
                 System.err.println("Ошибка при закрытии соединения: " + e.getMessage());
             }
+        }
+    }
+
+    private static int insertNewCustomer(Connection conn) throws SQLException {
+        String sql = "INSERT INTO final_attestation_pakudin.customer (first_name, last_name, phone, email) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, "Test");
+            pstmt.setString(2, "User");
+            pstmt.setString(3, "+123234345");
+            pstmt.setString(4, "test.user@example.com");
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        int customerId = rs.getInt(1);
+                        System.out.println("Создан новый покупатель с ID: " + customerId);
+                        return customerId;
+                    }
+                }
+            }
+            throw new SQLException("Не удалось создать покупателя");
         }
     }
 }
