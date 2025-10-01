@@ -212,7 +212,7 @@ public class App {
 
     private static void displayLast5Orders(Connection conn) throws SQLException {
         String sql = """
-            SELECT 
+            SELECT
                 oh.id as order_id,
                 c.first_name || ' ' || c.last_name as customer_name,
                 oh.order_date,
@@ -280,6 +280,39 @@ public class App {
             pstmt.setInt(2, productId);
             int rowsUpdated = pstmt.executeUpdate();
             System.out.println("Обновлено количество товара. Затронуто строк: " + rowsUpdated);
+        }
+    }
+
+    private static void deleteTestRecords(Connection conn, int orderId, int customerId, int productId) throws SQLException {
+        // Удаляем в правильном порядке из-за foreign keys
+        System.out.println("Удаляем тестовые записи");
+        //Удаляем тело заказа
+        String deleteOrderBodySql = "DELETE FROM final_attestation_pakudin.order_body WHERE head_id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(deleteOrderBodySql)) {
+            pstmt.setInt(1, orderId);
+            int rowsDeleted = pstmt.executeUpdate();
+            System.out.println("Удалено строк из order_body: " + rowsDeleted);
+        }
+        //Удаляем заголовок заказа
+        String deleteOrderHeadSql = "DELETE FROM final_attestation_pakudin.order_head WHERE id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(deleteOrderHeadSql)) {
+            pstmt.setInt(1, orderId);
+            int rowsDeleted = pstmt.executeUpdate();
+            System.out.println("Удалено заказов: " + rowsDeleted);
+        }
+        //Удаляем покупателя (если у него нет других заказов)
+        String deleteCustomerSql = "DELETE FROM final_attestation_pakudin.customer WHERE id = ? AND id NOT IN (SELECT customer_id FROM final_attestation_pakudin.order_head)";
+        try (PreparedStatement pstmt = conn.prepareStatement(deleteCustomerSql)) {
+            pstmt.setInt(1, customerId);
+            int rowsDeleted = pstmt.executeUpdate();
+            System.out.println("Удалено покупателей: " + rowsDeleted);
+        }
+        //Удаляем товар (если он не используется в заказах)
+        String deleteProductSql = "DELETE FROM final_attestation_pakudin.product WHERE id = ? AND id NOT IN (SELECT product_id FROM final_attestation_pakudin.order_body)";
+        try (PreparedStatement pstmt = conn.prepareStatement(deleteProductSql)) {
+            pstmt.setInt(1, productId);
+            int rowsDeleted = pstmt.executeUpdate();
+            System.out.println("Удалено товаров: " + rowsDeleted);
         }
     }
 }
