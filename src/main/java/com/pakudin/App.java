@@ -137,13 +137,11 @@ public class App {
 
     private static int insertNewCustomer(Connection conn) throws SQLException {
         String sql = "INSERT INTO final_attestation_pakudin.customer (first_name, last_name, phone, email) VALUES (?, ?, ?, ?)";
-
         try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, "Test");
             pstmt.setString(2, "User");
             pstmt.setString(3, "+123234345");
             pstmt.setString(4, "test.user@example.com");
-
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
                 try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -155,6 +153,27 @@ public class App {
                 }
             }
             throw new SQLException("Не удалось создать покупателя");
+        }
+    }
+
+    private static int insertNewProduct(Connection conn) throws SQLException {
+        String sql = "INSERT INTO final_attestation_pakudin.product (product_name, price, quantity, category_id) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, "Test Product SSD");
+            pstmt.setDouble(2, 7500.00);
+            pstmt.setInt(3, 50);
+            pstmt.setInt(4, 3);
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        int productId = rs.getInt(1);
+                        System.out.println("Создан новый товар с ID: " + productId);
+                        return productId;
+                    }
+                }
+            }
+            throw new SQLException("Не удалось создать товар");
         }
     }
 }
