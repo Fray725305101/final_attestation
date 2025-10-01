@@ -70,7 +70,12 @@ public class App {
                     .baselineOnMigrate(Boolean.parseBoolean(props.getProperty("flyway.baselineOnMigrate")))
                     .cleanDisabled(Boolean.parseBoolean(props.getProperty("flyway.cleanDisabled")))
                     .load();
-            flyway.clean();
+            System.out.println("Предварительная очистка схемы");
+            if (askForExec()) {
+                flyway.clean(); //Затираем схему
+            } else {
+                System.out.println("Данные в схеме сохранены");
+            }
             flyway.migrate();
             System.out.println("Миграция завершена!");
     }
@@ -84,36 +89,28 @@ public class App {
                     props.getProperty("db.username"),
                     props.getProperty("db.password")
             );
-
-            // Начинаем транзакцию
+            //Начинаем транзакцию
             conn.setAutoCommit(false);
             System.out.println("CRUD Операции:");
-
-            // 1. Вставка нового товара и покупателя
+            //Вставка нового товара и покупателя
             System.out.println("1) Добавление нового товара и нового покупателя");
             int newCustomerId = insertNewCustomer(conn);
             int newProductId = insertNewProduct(conn);
-
-            // 2. Создание заказа для покупателя
+            //Создание заказа для покупателя
             System.out.println("2) Создаём новый заказ");
             int newOrderId = createOrderForCustomer(conn, newCustomerId, newProductId);
-
-            // 3. Чтение и вывод последних 5 заказов
+            //Чтение и вывод последних 5 заказов
             System.out.println("3) Выбираем последние 5 заказов");
             displayLast5Orders(conn);
-
-            // 4. Обновление цены товара и количества на складе
+            //Обновление цены товара и количества на складе
             System.out.println("4) Обновляем данные товара");
             updateProductPriceAndQuantity(conn, newProductId);
-
-            // 5. Удаление тестовых записей
+            //Удаление тестовых записей
             System.out.println("5) Удаляем тестовые данные");
             deleteTestRecords(conn, newOrderId, newCustomerId, newProductId);
-
-            // Фиксируем транзакцию
+            // Коммитим
             conn.commit();
             System.out.println("Все CRUD операции выполнены успешно!");
-
         } catch (SQLException e) {
             System.err.println("Ошибка SQL: " + e.getMessage());
             try {
