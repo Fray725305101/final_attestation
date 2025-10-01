@@ -363,14 +363,12 @@ public class App {
         //Читаем весь файл
         String content = new String(java.nio.file.Files.readAllBytes(
                 java.nio.file.Paths.get(filename)));
-        //Разделяем на отдельные запросы по точке с запятой
         String[] queries = content.split(";");
+        //Разделяем на отдельные запросы по точке с запятой
         for (int i = 0; i < queries.length; i++) {
             String query = queries[i].trim();
             if (query.isEmpty()) continue;
-            System.out.println("\n" + "─".repeat(60));
-            System.out.println("Запрос " + (i + 1) + ":");
-            System.out.println("─".repeat(60));
+            System.out.println("\n=== Запрос " + (i + 1) + " ===");
             //Показываем первую строку запроса для информации
             String firstLine = query.split("\n")[0].trim();
             System.out.println(firstLine + (query.length() > firstLine.length() ? "..." : ""));
@@ -393,68 +391,31 @@ public class App {
         try (ResultSet rs = stmt.executeQuery(query)) {
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
-            //Выводим заголовок таблицы
-            printTableHeader(metaData, columnCount);
+            for (int i = 1; i <= columnCount; i++) {
+                String columnName = metaData.getColumnName(i);
+                System.out.printf("%-20s", columnName);
+            }
+            System.out.println();
+            for (int i = 1; i <= columnCount; i++) {
+                System.out.print("--------------------");
+            }
+            System.out.println();
             //Выводим данные
             int rowCount = 0;
             while (rs.next()) {
-                printTableRow(rs, metaData, columnCount);
+                for (int i = 1; i <= columnCount; i++) {
+                    String value = rs.getString(i);
+                    if (value == null) value = "NULL";
+                    //Обрезаем длинные значения
+                    if (value.length() > 18) {
+                        value = value.substring(0, 15) + "...";
+                    }
+                    System.out.printf("%-20s", value);
+                }
+                System.out.println();
                 rowCount++;
             }
-            //Выводим итоговую строку
-            printTableFooter(columnCount);
             System.out.println("Найдено строк: " + rowCount);
         }
-    }
-
-    private static void printTableHeader(ResultSetMetaData metaData, int columnCount) throws SQLException {
-        StringBuilder header = new StringBuilder("┌");
-        StringBuilder separator = new StringBuilder("├");
-        for (int i = 1; i <= columnCount; i++) {
-            String columnName = metaData.getColumnName(i);
-            int columnWidth = Math.max(columnName.length(), 15);
-            header.append("─".repeat(columnWidth)).append("─┬");
-            separator.append("─".repeat(columnWidth)).append("─┼");
-        }
-        header.setLength(header.length() - 1);
-        separator.setLength(separator.length() - 1);
-        header.append("┐");
-        separator.append("┤");
-        System.out.println(header);
-        //Названия колонок
-        System.out.print("│");
-        for (int i = 1; i <= columnCount; i++) {
-            String columnName = metaData.getColumnName(i);
-            int columnWidth = Math.max(columnName.length(), 15);
-            System.out.printf(" %-" + (columnWidth - 1) + "s│", columnName);
-        }
-        System.out.println();
-        System.out.println(separator);
-    }
-
-    private static void printTableRow(ResultSet rs, ResultSetMetaData metaData, int columnCount) throws SQLException {
-        System.out.print("│");
-        for (int i = 1; i <= columnCount; i++) {
-            String value = rs.getString(i);
-            if (value == null) value = "NULL";
-            String columnName = metaData.getColumnName(i);
-            int columnWidth = Math.max(columnName.length(), 15);
-            //Обрезаем длинные значения
-            if (value.length() > columnWidth - 2) {
-                value = value.substring(0, columnWidth - 5) + "...";
-            }
-            System.out.printf(" %-" + (columnWidth - 1) + "s│", value);
-        }
-        System.out.println();
-    }
-
-    private static void printTableFooter(int columnCount) {
-        StringBuilder footer = new StringBuilder("└");
-        for (int i = 0; i < columnCount; i++) {
-            footer.append("─".repeat(15)).append("─┴");
-        }
-        footer.setLength(footer.length() - 1);
-        footer.append("┘");
-        System.out.println(footer);
     }
 }
