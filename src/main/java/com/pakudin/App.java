@@ -5,6 +5,7 @@ import org.flywaydb.core.Flyway;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.Properties;
 import java.io.FileInputStream;
 
@@ -107,9 +108,15 @@ public class App {
             updateProductPriceAndQuantity(conn, newProductId);
             //Удаление тестовых записей
             System.out.println("5) Удаляем тестовые данные");
-            deleteTestRecords(conn, newOrderId, newCustomerId, newProductId);
-            // Коммитим
+            //Коммитим
             conn.commit();
+            //Делаем запрос на удаления для возможности проверки
+            if (askForExec()) {
+                deleteTestRecords(conn, newOrderId, newCustomerId, newProductId);
+                conn.commit();
+            } else {
+                System.out.println("Тестовые данные сохранены");
+            }
             System.out.println("Все CRUD операции выполнены успешно!");
         } catch (SQLException e) {
             System.err.println("Ошибка SQL: " + e.getMessage());
@@ -243,12 +250,13 @@ public class App {
                 String status = rs.getString("status_name");
                 String products = rs.getString("products");
                 String phone = rs.getString("phone");
+                String formattedDate = formatDate(orderDate);
 
                 // Форматируем вывод в виде таблицы
                 System.out.printf("│ %-7d │ %-20s │ %-19s │ %-16s │ %-43s │ %-14s │%n",
                         orderId,
                         truncate(customerName, 20),
-                        orderDate.toLocalDateTime().toString().replace('T', ' '),
+                        formattedDate,
                         truncate(status, 16),
                         truncate(products, 43),
                         truncate(phone, 14)
@@ -262,6 +270,13 @@ public class App {
     private static String truncate(String str, int length) {
         if (str == null) return "";
         return str.length() > length ? str.substring(0, length - 3) + "..." : str;
+    }
+
+    //Метод для форматирования даты
+    private static String formatDate(Timestamp timestamp) {
+        if (timestamp == null) return "";
+        LocalDateTime dateTime = timestamp.toLocalDateTime();
+        return dateTime.toString().replace('T', ' ').substring(0, 16); // "YYYY-MM-DD HH:mm"
     }
 
     private static void updateProductPriceAndQuantity(Connection conn, int productId) throws SQLException {
