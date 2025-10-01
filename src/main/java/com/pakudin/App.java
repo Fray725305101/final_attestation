@@ -22,6 +22,7 @@ public class App {
             } else {
                 System.out.println("Миграция пропущена");
             }
+            crudsOps(props); //Работаем с CRUD операциями
         } catch (Exception e) {
             System.err.println("Ошибка: " + e.getMessage());
             e.printStackTrace();
@@ -67,4 +68,6 @@ public class App {
             flyway.migrate();
             System.out.println("Миграция завершена!");
     }
+
+
 }
