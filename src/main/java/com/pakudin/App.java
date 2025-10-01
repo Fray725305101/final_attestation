@@ -358,4 +358,34 @@ public class App {
             System.err.println("Ошибка чтения файла: " + e.getMessage());
         }
     }
+
+    private static void executeSQLFile(Connection conn, String filename) throws SQLException, IOException {
+        //Читаем весь файл
+        String content = new String(java.nio.file.Files.readAllBytes(
+                java.nio.file.Paths.get(filename)));
+        //Разделяем на отдельные запросы по точке с запятой
+        String[] queries = content.split(";");
+        for (int i = 0; i < queries.length; i++) {
+            String query = queries[i].trim();
+            if (query.isEmpty()) continue;
+            System.out.println("\n" + "─".repeat(60));
+            System.out.println("Запрос " + (i + 1) + ":");
+            System.out.println("─".repeat(60));
+            //Показываем первую строку запроса для информации
+            String firstLine = query.split("\n")[0].trim();
+            System.out.println(firstLine + (query.length() > firstLine.length() ? "..." : ""));
+            try (Statement stmt = conn.createStatement()) {
+                if (query.trim().toUpperCase().startsWith("SELECT")) {
+                    //SELECT запросы - выводим результаты
+                    executeAndDisplaySelectQuery(stmt, query);
+                } else {
+                    //UPDATE/DELETE/INSERT запросы - показываем количество измененных строк
+                    int affectedRows = stmt.executeUpdate(query);
+                    System.out.println("Выполнено успешно. Затронуто строк: " + affectedRows);
+                }
+            } catch (SQLException e) {
+                System.err.println("Ошибка при выполнении запроса " + (i + 1) + ": " + e.getMessage());
+            }
+        }
+    }
 }
