@@ -388,4 +388,25 @@ public class App {
             }
         }
     }
+
+    private static void executeAndDisplaySelectQuery(Statement stmt, String query) throws SQLException {
+        try (ResultSet rs = stmt.executeQuery(query)) {
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            //Выводим заголовок таблицы
+            printTableHeader(metaData, columnCount);
+            //Выводим данные
+            int rowCount = 0;
+            while (rs.next()) {
+                printTableRow(rs, metaData, columnCount);
+                rowCount++;
+            }
+            //Выводим итоговую строку
+            printTableFooter(columnCount);
+            System.out.println("Найдено строк: " + rowCount);
+        }
+    }
+
+
+
 }
