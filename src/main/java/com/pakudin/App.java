@@ -3,6 +3,7 @@ package com.pakudin;
 import org.flywaydb.core.Flyway;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -28,6 +29,12 @@ public class App {
                 crudsOps(props); //Работаем с CRUD операциями
             } else {
                 System.out.println("Демонстрация работы CRUD операций пропущена");
+            }
+            System.out.println("Выполнение test-queries.sql");
+            if (askForExec()) {
+                executeTestQueries(props); //Работаем с CRUD операциями
+            } else {
+                System.out.println("Выполнение test-queries.sql пропущено");
             }
         } catch (Exception e) {
             System.err.println("Ошибка: " + e.getMessage());
@@ -327,6 +334,28 @@ public class App {
             pstmt.setInt(1, productId);
             int rowsDeleted = pstmt.executeUpdate();
             System.out.println("Удалено товаров: " + rowsDeleted);
+        }
+    }
+
+    private static void executeTestQueries(Properties props) {
+        try (Connection conn = DriverManager.getConnection(
+                props.getProperty("db.url"),
+                props.getProperty("db.username"),
+                props.getProperty("db.password"))) {
+            conn.setAutoCommit(false);
+            executeSQLFile(conn, "src/main/resources/db/queries/test-queries.sql");
+            System.out.println("Коммит записей?");
+            if (askForExec()) {
+                conn.commit();
+                System.out.println("Коммит выполнен");
+            } else {
+                conn.rollback();
+                System.out.println("Роллбэк выполнен");
+            }
+        } catch (SQLException e) {
+            System.err.println("Ошибка подключения к БД: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Ошибка чтения файла: " + e.getMessage());
         }
     }
 }
